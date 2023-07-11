@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: Account Builder Template for security.
+Description: Account Builder Template.
 Parameters:
   accountemail:
     Description: "Account Email address"
