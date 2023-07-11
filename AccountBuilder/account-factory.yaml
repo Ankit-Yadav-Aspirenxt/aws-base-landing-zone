@@ -13,6 +13,14 @@ Parameters:
     AllowedPattern: ".+"
     ConstraintDescription: "Provide the account name"
 
+  oucreation:
+    Description: "Do you want to create Sub/Child Oraganization Unit?"
+    Type: String
+    Default: "Skip"
+    AllowedValues:
+      - "Create"
+      - "Skip"
+    
   organizationunitname:
     Description: "Name of the organization unit to which the account should be moved to."
     Type: String
@@ -35,7 +43,7 @@ Parameters:
   Region:
     Type: String
     Description: 'Security Agrregator Stackset Region'
-    Default: ap-southeast-1
+    Default: ap-south-1
 
 Metadata:
   'AWS::CloudFormation::Interface':
@@ -45,6 +53,7 @@ Metadata:
         Parameters:
           - accountname
           - accountemail
+          - oucreation
           - organizationunitname
 
       - Label:
@@ -59,9 +68,13 @@ Metadata:
           - Region
           - sourcebucket
 
+Conditions:
+ CreateOUCondition: !Equals [!Ref oucreation, "Create"]
+
 Resources:
   SubOrganizationUnitCreation:
     Type: AWS::Organizations::OrganizationalUnit
+    Condition: CreateResourceCondition
     Properties: 
       Name: !Ref organizationunitname
       ParentId: !Ref ParentOrganizationUnitId
