@@ -38,7 +38,7 @@ Parameters:
       character
   stackregion:
     Description: Region for deploying the baseline template in the created account
-    Default: ap-southeast-1
+    Default: ap-south-1
     Type: String
     AllowedPattern: .+
     AllowedValues:
