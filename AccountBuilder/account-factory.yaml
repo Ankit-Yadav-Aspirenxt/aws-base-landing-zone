@@ -74,7 +74,7 @@ Conditions:
 Resources:
   SubOrganizationUnitCreation:
     Type: AWS::Organizations::OrganizationalUnit
-    Condition: CreateResourceCondition
+    Condition: CreateOUCondition
     Properties: 
       Name: !Ref organizationunitname
       ParentId: !Ref ParentOrganizationUnitId
