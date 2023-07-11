@@ -1,6 +1,6 @@
 
 AWSTemplateFormatVersion: 2010-09-09
-Description: Baseline IAM resources for new account
+Description: Baseline Template to provision s3 bucket and policy for logging account
 
 Parameters:
   s3cloudtrailbucketName:
