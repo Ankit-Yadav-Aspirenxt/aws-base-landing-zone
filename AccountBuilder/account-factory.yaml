@@ -12,7 +12,6 @@ Parameters:
     Type: String
     AllowedPattern: ".+"
     ConstraintDescription: "Provide the account name"
-    
 
   organizationunitname:
     Description: "Name of the organization unit to which the account should be moved to."
@@ -20,8 +19,12 @@ Parameters:
     Default: "None"
     AllowedPattern: ".+"
   
-  OrganizationUnitId:
-    Description: "Enter Organization unit ID where log and security account exist"
+  ParentOrganizationUnitId:
+    Description: "Enter Organization unit ID of your parent Organization"
+    Type: String
+
+  SecOrganizationUnitId:
+    Description: "Enter Organization unit ID where security account resides"
     Type: String
 
   sourcebucket:
@@ -34,7 +37,35 @@ Parameters:
     Description: 'Security Agrregator Stackset Region'
     Default: ap-southeast-1
 
+Metadata:
+  'AWS::CloudFormation::Interface':
+    ParameterGroups:
+      - Label:
+          default: New Account Provision Detail
+        Parameters:
+          - accountname
+          - accountemail
+          - organizationunitname
+
+      - Label:
+          default: Organization Unit Details
+        Parameters:
+          - ParentOrganizationUnitId
+          - SecOrganizationUnitId
+
+      - Label:
+          default: Others
+        Parameters:
+          - Region
+          - sourcebucket
+
 Resources:
+  SubOrganizationUnitCreation:
+    Type: AWS::Organizations::OrganizationalUnit
+    Properties: 
+      Name: !Ref organizationunitname
+      ParentId: !Ref ParentOrganizationUnitId
+
   AccountIdParameter:
     Type: AWS::SSM::Parameter
     Properties:
@@ -55,7 +86,7 @@ Resources:
         - DeploymentTargets:
             AccountFilterType: INTERSECTION
             OrganizationalUnitIds:
-              - !Ref OrganizationUnitId
+              - !Ref SecOrganizationUnitId
             Accounts :
               - '{{resolve:ssm:SecurityAccountId:1}}'
           Regions:
@@ -170,7 +201,7 @@ Resources:
         - DeploymentTargets:
             AccountFilterType: INTERSECTION
             OrganizationalUnitIds:
-              - !Ref OrganizationUnitId
+              - !Ref SecOrganizationUnitId
             Accounts :
               - !GetAtt "TriggerLambda.AccountID"
           Regions:
@@ -217,7 +248,7 @@ Resources:
         Variables:
           "accountemail": !Ref accountemail
           "accountname": !Ref accountname
-          "organizationunitname": !Ref "organizationunitname"
+          "organizationunitname": "None"
   LambdaExecuteRole:
     Type: "AWS::IAM::Role"
     Properties:
